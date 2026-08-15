@@ -130,7 +130,7 @@ def process_agent_query(user_question: str, max_retries: int = 3):
                 "sql": cleaned_sql,
                 "data_sample": data_sample
             })
-            
+            safe_summary = summary_text.replace("$", r"\$")
             status_box.update(label="🎉 Execution complete!", state="complete", expanded=False)
             return cleaned_sql, result, summary_text
         else:
@@ -187,8 +187,11 @@ if prompt:
     # Run Agent
     with st.chat_message("assistant"):
         sql, df, summary = process_agent_query(prompt)
+
+        # Escape the dollar signs so Streamlit doesn't render them as LaTeX
+        safe_summary = summary.replace("$", r"\$")
         
-        st.markdown(f"**Executive Summary:**\n{summary}")
+        st.markdown(f"**Executive Summary:**\n{safe_summary}")
         
         if sql:
             st.markdown("**Executed SQL:**")
@@ -217,7 +220,7 @@ if prompt:
         # Save assistant message to session state
         st.session_state.messages.append({
             "role": "assistant",
-            "content": f"**Executive Summary:**\n{summary}",
+            "content": f"**Executive Summary:**\n{safe_summary}",
             "sql": sql,
             "dataframe": df
         })
