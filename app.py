@@ -130,7 +130,7 @@ def process_agent_query(user_question: str, max_retries: int = 3):
                 "sql": cleaned_sql,
                 "data_sample": data_sample
             })
-            safe_summary = summary_text.replace("$", r"\$")
+        
             status_box.update(label="🎉 Execution complete!", state="complete", expanded=False)
             return cleaned_sql, result, summary_text
         else:
